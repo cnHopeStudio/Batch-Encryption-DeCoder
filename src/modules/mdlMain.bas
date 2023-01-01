@@ -25,28 +25,28 @@ Public Type OPENFILENAME
     lpTemplateName As String
 End Type
 
-Public Type DLGRET ' ×Ô¶¨Òå·µ»ØÀàĞÍ
+Public Type DLGRET ' è‡ªå®šä¹‰è¿”å›ç±»å‹
     lngIsOpened As Long
     strFileName As String
     blnIsOpened As Boolean
 End Type
 
-Public Type CHRMAP  ' ÎÄ±¾Ó³Éä
+Public Type CHRMAP  ' æ–‡æœ¬æ˜ å°„
     strPlainText As String
     strCipherText As String
 End Type
 
-Public Type CHRMAPSET   ' Ó³Éä×Ö·û¼¯
+Public Type CHRMAPSET   ' æ˜ å°„å­—ç¬¦é›†
     strEnvironmentName As String
     strEnvironmentValue As String
     cmpCharMap() As CHRMAP
 End Type
 
-Public Type ALPHABET    ' ¼ÓÃÜ×ÖÄ¸±í
+Public Type ALPHABET    ' åŠ å¯†å­—æ¯è¡¨
     cmsCharMapSet() As CHRMAPSET
 End Type
 
-' lpstrInitialDir ³õÊ¼µØÖ·
+' lpstrInitialDir åˆå§‹åœ°å€
 Public Function GetOpenFile(hwndOwner As Long, lpstrFilter As String, lpstrInitialDir As String, lpstrTitle As String) As DLGRET
 
     Dim ofnOpenFileName As OPENFILENAME
@@ -79,7 +79,7 @@ Public Function GetOpenFile(hwndOwner As Long, lpstrFilter As String, lpstrIniti
     
 End Function
 
-' lpstrInitialDir ³õÊ¼µØÖ·
+' lpstrInitialDir åˆå§‹åœ°å€
 Public Function GetSaveFile(hwndOwner As Long, lpstrFilter As String, lpstrInitialDir As String, lpstrTitle As String) As DLGRET
 
     Dim ofnSaveFileName As OPENFILENAME
