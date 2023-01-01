@@ -13,9 +13,9 @@ Begin VB.Form frmMain
    MinButton       =   0   'False
    ScaleHeight     =   6615
    ScaleWidth      =   9360
-   StartUpPosition =   3  '´°¿ÚÈ±Ê¡
+   StartUpPosition =   3  'çª—å£ç¼ºçœ
    Begin VB.CommandButton cmdDeCodeAndOutputToFile 
-      Caption         =   "½âÃÜ²¢Êä³ö"
+      Caption         =   "è§£å¯†å¹¶è¾“å‡º"
       Height          =   375
       Left            =   120
       TabIndex        =   5
@@ -27,7 +27,7 @@ Begin VB.Form frmMain
       Height          =   375
       Left            =   8520
       TabIndex        =   4
-      ToolTipText     =   "Ñ¡ÔñÊä³öÎÄ¼ş"
+      ToolTipText     =   "é€‰æ‹©è¾“å‡ºæ–‡ä»¶"
       Top             =   5640
       Width           =   735
    End
@@ -36,7 +36,7 @@ Begin VB.Form frmMain
       Height          =   375
       Left            =   8520
       TabIndex        =   1
-      ToolTipText     =   "Ñ¡Ôñ´ı½âÃÜÎÄ¼ş"
+      ToolTipText     =   "é€‰æ‹©å¾…è§£å¯†æ–‡ä»¶"
       Top             =   5160
       Width           =   735
    End
@@ -66,7 +66,7 @@ Begin VB.Form frmMain
       Location        =   "http:///"
    End
    Begin VB.Label lblOutFile 
-      Caption         =   "Êä³öÎÄ¼ş£º"
+      Caption         =   "è¾“å‡ºæ–‡ä»¶ï¼š"
       Height          =   255
       Left            =   120
       TabIndex        =   3
@@ -74,7 +74,7 @@ Begin VB.Form frmMain
       Width           =   8295
    End
    Begin VB.Label lblInFile 
-      Caption         =   "´ı½âÃÜÎÄ¼ş£º"
+      Caption         =   "å¾…è§£å¯†æ–‡ä»¶ï¼š"
       Height          =   255
       Left            =   120
       TabIndex        =   2
@@ -116,17 +116,17 @@ End Sub
 Private Sub cmdDeCodeAndOutputToFile_Click()
 
     If strInFile = "" Then
-        MsgBox "ÎŞĞ§ÎÄ¼şÉèÖÃ£¬Ã»ÓĞÑ¡¶¨Ô´ÎÄ¼ş", vbCritical, App.Title
+        MsgBox "æ— æ•ˆæ–‡ä»¶è®¾ç½®ï¼Œæ²¡æœ‰é€‰å®šæºæ–‡ä»¶", vbCritical, App.Title
         Exit Sub
     End If
 
     If strOutFile = "" Then
-        MsgBox "ÎŞĞ§ÎÄ¼şÉèÖÃ£¬Ã»ÓĞÑ¡¶¨Ä¿±êÎÄ¼ş", vbCritical, App.Title
+        MsgBox "æ— æ•ˆæ–‡ä»¶è®¾ç½®ï¼Œæ²¡æœ‰é€‰å®šç›®æ ‡æ–‡ä»¶", vbCritical, App.Title
         Exit Sub
     End If
 
     If UCase(strInFile) = UCase(strOutFile) Then
-        MsgBox "ÎŞĞ§ÎÄ¼şÉèÖÃ£¬Ô´ÎÄ¼şÃû²»µÃÓëÄ¿±êÎÄ¼şÃûÏàÍ¬", vbCritical, App.Title
+        MsgBox "æ— æ•ˆæ–‡ä»¶è®¾ç½®ï¼Œæºæ–‡ä»¶åä¸å¾—ä¸ç›®æ ‡æ–‡ä»¶åç›¸åŒ", vbCritical, App.Title
         Exit Sub
     End If
     DoEvents
@@ -135,30 +135,30 @@ End Sub
 
 Private Sub cmdInFile_Click()
     Dim dlrReturn As DLGRET
-    dlrReturn = GetOpenFile(Me.hWnd, "MS-DOS Åú´¦ÀíÎÄ¼ş (*.bat)" & Chr(0) & "*.bat" & Chr(0) & _
-                                    "Windows NT Åú´¦ÀíÎÄ¼ş (*.cmd)" & Chr(0) & "*.cmd" & Chr(0), _
-                                    App.Path, "Ñ¡Ôñ´ı½âÃÜÎÄ¼ş")
+    dlrReturn = GetOpenFile(Me.hWnd, "MS-DOS æ‰¹å¤„ç†æ–‡ä»¶ (*.bat)" & Chr(0) & "*.bat" & Chr(0) & _
+                                    "Windows NT æ‰¹å¤„ç†æ–‡ä»¶ (*.cmd)" & Chr(0) & "*.cmd" & Chr(0), _
+                                    App.Path, "é€‰æ‹©å¾…è§£å¯†æ–‡ä»¶")
     If dlrReturn.blnIsOpened = True Then
         strInFile = dlrReturn.strFileName
-        lblInFile.Caption = "´ı½âÃÜÎÄ¼ş£º" & strInFile
+        lblInFile.Caption = "å¾…è§£å¯†æ–‡ä»¶ï¼š" & strInFile
         ReadInFile
         WriteInFileInformation
     Else
-        MsgBox "ÎŞ·¨·ÃÎÊÖ¸¶¨µÄÎÄ¼ş", vbCritical, App.Title
+        MsgBox "æ— æ³•è®¿é—®æŒ‡å®šçš„æ–‡ä»¶", vbCritical, App.Title
     End If
 End Sub
 
 Private Sub cmdOutFile_Click()
     Dim dlrReturn As DLGRET
-    dlrReturn = GetSaveFile(Me.hWnd, "MS-DOS Åú´¦ÀíÎÄ¼ş (*.bat)" & Chr(0) & "*.bat" & Chr(0) & _
-                                    "Windows NT Åú´¦ÀíÎÄ¼ş (*.cmd)" & Chr(0) & "*.cmd" & Chr(0), _
-                                    App.Path, "Ñ¡ÔñÊä³öÎÄ¼ş")
+    dlrReturn = GetSaveFile(Me.hWnd, "MS-DOS æ‰¹å¤„ç†æ–‡ä»¶ (*.bat)" & Chr(0) & "*.bat" & Chr(0) & _
+                                    "Windows NT æ‰¹å¤„ç†æ–‡ä»¶ (*.cmd)" & Chr(0) & "*.cmd" & Chr(0), _
+                                    App.Path, "é€‰æ‹©è¾“å‡ºæ–‡ä»¶")
                                     
     If dlrReturn.blnIsOpened = True Then
         strOutFile = dlrReturn.strFileName
-        lblOutFile.Caption = "Êä³öÎÄ¼ş£º" & strOutFile
+        lblOutFile.Caption = "è¾“å‡ºæ–‡ä»¶ï¼š" & strOutFile
     Else
-        MsgBox "ÎŞ·¨·ÃÎÊÖ¸¶¨µÄÎÄ¼ş", vbCritical, App.Title
+        MsgBox "æ— æ³•è®¿é—®æŒ‡å®šçš„æ–‡ä»¶", vbCritical, App.Title
     End If
 End Sub
 
@@ -195,8 +195,8 @@ End Function
 Private Function WriteInFileInformation()
     With brwDocument.Document
         '.Open
-        .Write "<div class=""sectionTitle""><h5>´ı½âÃÜÎÄ¼ş£º" & ChangeTextToHTMLEntity(strInFile)
-        .Write "<hr />´úÂë</h5>" & vbCrLf
+        .Write "<div class=""sectionTitle""><h5>å¾…è§£å¯†æ–‡ä»¶ï¼š" & ChangeTextToHTMLEntity(strInFile)
+        .Write "<hr />ä»£ç </h5>" & vbCrLf
         '.Close
         
         .Write "<div class=""programCode"">"
@@ -212,7 +212,7 @@ End Function
 Private Function WriteEncryptionHeader(strEncryptionHeader As String)
     With brwDocument.Document
         '.Open
-        .Write "<div class=""sectionTitle""><h5>¼ÓÃÜ±êÍ·</h5>" & vbCrLf
+        .Write "<div class=""sectionTitle""><h5>åŠ å¯†æ ‡å¤´</h5>" & vbCrLf
         '.Close
         
         .Write "<div class=""programCode"">"
@@ -231,7 +231,7 @@ Private Function WriteEnvironmentList()
 
     With brwDocument.Document
         '.Open
-        .Write "<div class=""sectionTitle""><h5>¼ÓÃÜ±êÍ·ËùÊ¹ÓÃµÄ»·¾³±äÁ¿</h5>" & vbCrLf
+        .Write "<div class=""sectionTitle""><h5>åŠ å¯†æ ‡å¤´æ‰€ä½¿ç”¨çš„ç¯å¢ƒå˜é‡</h5>" & vbCrLf
         '.Close
         
         .Write "<div class=""programCode"">"
@@ -253,12 +253,12 @@ Private Function WriteAlphaBetList()
 
     With brwDocument.Document
         '.Open
-        .Write "<div class=""sectionTitle""><h5>»·¾³±äÁ¿Ó³Éä±í</h5>" & vbCrLf
+        .Write "<div class=""sectionTitle""><h5>ç¯å¢ƒå˜é‡æ˜ å°„è¡¨</h5>" & vbCrLf
         '.Close
         
         .Write "<div class=""programCode"">"
         .Write "<p><h6>" & vbCrLf
-        .Write "<table border=""1"" style=""font-size: xx-small;""><tr><td>»·¾³±äÁ¿Ó³Éä</td><td>Ó³ÉäÄÚÈİ</td><tr>" & vbCrLf
+        .Write "<table border=""1"" style=""font-size: xx-small;""><tr><td>ç¯å¢ƒå˜é‡æ˜ å°„</td><td>æ˜ å°„å†…å®¹</td><tr>" & vbCrLf
         For i = 0 To UBound(albAlphaBet.cmsCharMapSet)
             For j = 0 To UBound(albAlphaBet.cmsCharMapSet(i).cmpCharMap)
                 DoEvents
@@ -278,7 +278,7 @@ End Function
 Private Function WriteHeader(strHeader As String)
     With brwDocument.Document
         '.Open
-        .Write "<div class=""sectionTitle""><h5>¼ÓÃÜ±êÍ·</h5>" & vbCrLf
+        .Write "<div class=""sectionTitle""><h5>åŠ å¯†æ ‡å¤´</h5>" & vbCrLf
         '.Close
         
         .Write "<div class=""programCode"">"
@@ -294,7 +294,7 @@ End Function
 Private Function WritePasswordTable()
     With brwDocument.Document
         '.Open
-        .Write "<div class=""sectionTitle""><h5>ÃÜÂë±í</h5>" & vbCrLf
+        .Write "<div class=""sectionTitle""><h5>å¯†ç è¡¨</h5>" & vbCrLf
         '.Close
         
         .Write "<div class=""programCode"">"
@@ -310,7 +310,7 @@ End Function
 Private Function WriteCode(strSrcCode As String, lngCount As Long)
     With brwDocument.Document
         '.Open
-        .Write "<div class=""sectionTitle""><h5>µÚ " & lngCount & " ÂÖ½âÃÜ</h5>" & vbCrLf
+        .Write "<div class=""sectionTitle""><h5>ç¬¬ " & lngCount & " è½®è§£å¯†</h5>" & vbCrLf
         '.Close
         
         .Write "<div class=""programCode"">"
@@ -326,7 +326,7 @@ End Function
 Private Function WriteSrcCode(strSrcCode As String)
     With brwDocument.Document
         '.Open
-        .Write "<div class=""sectionTitle""><h5>Ô´Âë</h5>" & vbCrLf
+        .Write "<div class=""sectionTitle""><h5>æºç </h5>" & vbCrLf
         '.Close
         
         .Write "<div class=""programCode"">"
@@ -340,13 +340,13 @@ Private Function WriteSrcCode(strSrcCode As String)
 End Function
 
 ' ------------------------------------------------------------------------------------------------
-' ½âÃÜº¯Êı
+' è§£å¯†å‡½æ•°
 ' ------------------------------------------------------------------------------------------------
 
 Private Function DeCodeAndOutput()
     Dim strEncryptionHeader As String
     Dim strHeader As String
-    Dim strSourceCode As String ' Ô´Âë
+    Dim strSourceCode As String ' æºç 
     
     Me.Caption = "BatchEncryption DeCoder [Working...]"
     
@@ -370,37 +370,37 @@ Private Function DeCodeAndOutput()
     
     Me.Caption = "BatchEncryption DeCoder"
     
-    MsgBox "½âÃÜ³É¹¦£¡", vbInformation, App.Title
+    MsgBox "è§£å¯†æˆåŠŸï¼", vbInformation, App.Title
     
 End Function
 
-' Êä³öµ½ÎÄ¼ş
+' è¾“å‡ºåˆ°æ–‡ä»¶
 Private Function Output(strSrcCode As String)
     Dim intFileNum As Integer
     intFileNum = FreeFile
     
-    Me.Caption = "BatchEncryption DeCoder [Working...] [Êä³öµ½ÎÄ¼ş...]"
+    Me.Caption = "BatchEncryption DeCoder [Working...] [è¾“å‡ºåˆ°æ–‡ä»¶...]"
     
     Open strOutFile For Output As #intFileNum
         Print #intFileNum, strSrcCode
     Close #intFileNum
 End Function
 
-' ½âÃÜ
+' è§£å¯†
 Private Function DeCode() As String
-    Dim strSrc As String ' Ğè´¦ÀíµÄÔ´Âë
-    Dim strTemp As String ' ÁÙÊ±±äÁ¿
-    Dim strFirstLine As String ' µÚÒ»ĞĞ
-    Dim lngCount As Long ' ½âÃÜÂÖÊı
+    Dim strSrc As String ' éœ€å¤„ç†çš„æºç 
+    Dim strTemp As String ' ä¸´æ—¶å˜é‡
+    Dim strFirstLine As String ' ç¬¬ä¸€è¡Œ
+    Dim lngCount As Long ' è§£å¯†è½®æ•°
     Dim i As Long
     Dim j As Long
     
-    ' Ë¼Â·£º
-    ' È¥µô¿ªÍ·¶àÓàĞĞºó£¬¶ÔÃ¿Ò»ĞĞ½øĞĞ·ÖÎö£¬Èç¹ûÊÇÃÜÂë±íÔò½øĞĞ·ÖÎö£¬Èç¹û²»ÊÇ¾Í¿ªÊ¼È«ÎÄ½âÃÜ
+    ' æ€è·¯ï¼š
+    ' å»æ‰å¼€å¤´å¤šä½™è¡Œåï¼Œå¯¹æ¯ä¸€è¡Œè¿›è¡Œåˆ†æï¼Œå¦‚æœæ˜¯å¯†ç è¡¨åˆ™è¿›è¡Œåˆ†æï¼Œå¦‚æœä¸æ˜¯å°±å¼€å§‹å…¨æ–‡è§£å¯†
     
     strSrc = strCode
     
-    ' È¥Ç° 2 ĞĞ
+    ' å»å‰ 2 è¡Œ
     For i = 0 To 1
         strSrc = Mid(strSrc, InStr(strSrc, vbCrLf) + 2)
     Next i
@@ -409,7 +409,7 @@ Private Function DeCode() As String
     strFirstLine = Mid(strSrc, 1, InStr(strSrc, vbCrLf) - 1)
     ' Clipboard.SetText strFirstLine
     
-    ' ¸ñÊ½»¯´úÂë
+    ' æ ¼å¼åŒ–ä»£ç 
     strFirstLine = GetHeader(strFirstLine)
     strSrc = Mid(strSrc, InStr(strSrc, vbCrLf) + 2)
     strSrc = strFirstLine & vbCrLf & strSrc
@@ -417,19 +417,19 @@ Private Function DeCode() As String
     
     lngCount = 1
     
-    Do While UCase(strFirstLine) Like UCase("*@set '=*") ' ÈôµÚÒ»ĞĞÓĞÃÜÂë±íÉèÖÃÓï¾ä
+    Do While UCase(strFirstLine) Like UCase("*@set '=*") ' è‹¥ç¬¬ä¸€è¡Œæœ‰å¯†ç è¡¨è®¾ç½®è¯­å¥
     
-        Me.Caption = "BatchEncryption DeCoder [Working...] [µÚ " & lngCount & " ÂÖ½âÃÜ]"
+        Me.Caption = "BatchEncryption DeCoder [Working...] [ç¬¬ " & lngCount & " è½®è§£å¯†]"
     
-        ' »ñÈ¡ÃÜÂë
+        ' è·å–å¯†ç 
         GetPasswordTable strFirstLine
         WritePasswordTable
         InitCharMapSet cmsPasswordTable
         
-        strSrc = Mid(strSrc, InStr(strSrc, vbCrLf) + 2) ' È¥µÚÒ»ĞĞ
+        strSrc = Mid(strSrc, InStr(strSrc, vbCrLf) + 2) ' å»ç¬¬ä¸€è¡Œ
         strTemp = strSrc
         
-        ' È«ÎÄ½âÃÜ
+        ' å…¨æ–‡è§£å¯†
         For i = 0 To UBound(cmsPasswordTable.cmpCharMap)
             DoEvents
             With cmsPasswordTable.cmpCharMap(i)
@@ -437,24 +437,24 @@ Private Function DeCode() As String
             End With
         Next i
         
-        ' »ñÈ¡ÏÂÒ»ĞĞ
+        ' è·å–ä¸‹ä¸€è¡Œ
         strFirstLine = Mid(strTemp, 1, InStr(strTemp, vbCrLf) - 1)
         
-        ' Êä³öµ½ brwDocument
+        ' è¾“å‡ºåˆ° brwDocument
         WriteCode strTemp, lngCount
         
         lngCount = lngCount + 1
     
     Loop
     
-    strTemp = Mid(strTemp, InStr(strTemp, vbCrLf) + 2) ' È¥µÚÒ»ĞĞ£¨»¹Ô­ĞĞ£©
+    strTemp = Mid(strTemp, InStr(strTemp, vbCrLf) + 2) ' å»ç¬¬ä¸€è¡Œï¼ˆè¿˜åŸè¡Œï¼‰
     WriteSrcCode strTemp
     
-    DeCode = strTemp ' ·µ»Ø
+    DeCode = strTemp ' è¿”å›
     
 End Function
 
-' »ñÈ¡ÃÜÂë±í
+' è·å–å¯†ç è¡¨
 Private Function GetPasswordTable(strSrc As String)
     Dim strTemp As String
     Dim vntTemp As Variant
@@ -462,8 +462,8 @@ Private Function GetPasswordTable(strSrc As String)
     Dim i As Long
     
     strTemp = strSrc
-    strTemp = Replace(strTemp, "^^", "×ª")
-    strTemp = Replace(strTemp, "^&", "Óë")
+    strTemp = Replace(strTemp, "^^", "è½¬")
+    strTemp = Replace(strTemp, "^&", "ä¸")
     strTemp = Replace(strTemp, "^", "")
     
     strTemp = Replace(strTemp, "&", vbCrLf)
@@ -477,8 +477,8 @@ Private Function GetPasswordTable(strSrc As String)
         End If
     Next i
     
-    strPassword = Replace(strPassword, "×ª", "^")
-    strPassword = Replace(strPassword, "Óë", "&")
+    strPassword = Replace(strPassword, "è½¬", "^")
+    strPassword = Replace(strPassword, "ä¸", "&")
     
     strPassword = Mid(strPassword, 8)
     
@@ -487,7 +487,7 @@ Private Function GetPasswordTable(strSrc As String)
     
 End Function
 
-' »ñÈ¡±êÍ·
+' è·å–æ ‡å¤´
 Private Function GetHeader(strEncryptionHeader As String)
     Dim i As Long
     Dim j As Long
@@ -510,7 +510,7 @@ Private Function GetHeader(strEncryptionHeader As String)
     
 End Function
 
-' ³õÊ¼»¯×ÖÄ¸±í
+' åˆå§‹åŒ–å­—æ¯è¡¨
 Private Function InitAlphaBet()
     Dim i As Long
     
@@ -524,7 +524,7 @@ Private Function InitAlphaBet()
     
 End Function
 
-' ³õÊ¼»¯Ó³Éä×Ö·û¼¯
+' åˆå§‹åŒ–æ˜ å°„å­—ç¬¦é›†
 Private Function InitCharMapSet(ByRef cmsCharMapSet As CHRMAPSET)
     Dim lngEnvironmentSize As Long
     Dim lngMapCount As Long
@@ -534,7 +534,7 @@ Private Function InitCharMapSet(ByRef cmsCharMapSet As CHRMAPSET)
     
     lngEnvironmentSize = Len(cmsCharMapSet.strEnvironmentValue)
     
-    ' %strEnvName:~lngOffset,lngLength% Àà
+    ' %strEnvName:~lngOffset,lngLength% ç±»
     lngMapCount = ((lngEnvironmentSize ^ 2) + lngEnvironmentSize) / 2
     ReDim cmsCharMapSet.cmpCharMap(lngMapCount)
     
@@ -545,8 +545,8 @@ Private Function InitCharMapSet(ByRef cmsCharMapSet As CHRMAPSET)
     
     lngMapIndex = 1
     
-    For i = 0 To lngEnvironmentSize - 1 ' ÆğÊ¼×Ö·û
-        For j = 1 To lngEnvironmentSize - i ' ³¤¶È
+    For i = 0 To lngEnvironmentSize - 1 ' èµ·å§‹å­—ç¬¦
+        For j = 1 To lngEnvironmentSize - i ' é•¿åº¦
             With cmsCharMapSet.cmpCharMap(lngMapIndex)
                 .strCipherText = cmsCharMapSet.strEnvironmentName & ":~" & i & "," & j
                 .strPlainText = Mid(cmsCharMapSet.strEnvironmentValue, i + 1, j)
@@ -555,7 +555,7 @@ Private Function InitCharMapSet(ByRef cmsCharMapSet As CHRMAPSET)
         Next j
     Next i
     
-    ' %strEnvName:~-lngLength% Àà
+    ' %strEnvName:~-lngLength% ç±»
     lngMapCount = lngMapCount + lngEnvironmentSize
     ReDim Preserve cmsCharMapSet.cmpCharMap(lngMapCount)
     For i = lngEnvironmentSize To 1 Step -1
@@ -566,11 +566,11 @@ Private Function InitCharMapSet(ByRef cmsCharMapSet As CHRMAPSET)
         lngMapIndex = lngMapIndex + 1
     Next i
     
-    ' %strEnvName:~lngStart,-lngEnd% Àà
+    ' %strEnvName:~lngStart,-lngEnd% ç±»
     lngMapCount = lngMapCount + (((lngEnvironmentSize ^ 2) - lngEnvironmentSize) / 2)
     ReDim Preserve cmsCharMapSet.cmpCharMap(lngMapCount)
-    For i = 0 To lngEnvironmentSize - 2 ' ÆğÊ¼×Ö·û
-        For j = lngEnvironmentSize - i - 1 To 1 Step -1 ' ½áÊø×Ö·û
+    For i = 0 To lngEnvironmentSize - 2 ' èµ·å§‹å­—ç¬¦
+        For j = lngEnvironmentSize - i - 1 To 1 Step -1 ' ç»“æŸå­—ç¬¦
             With cmsCharMapSet.cmpCharMap(lngMapIndex)
                 .strCipherText = cmsCharMapSet.strEnvironmentName & ":~" & i & ",-" & j
                 .strPlainText = Mid(cmsCharMapSet.strEnvironmentValue, i + 1, lngEnvironmentSize - i - j)
@@ -579,11 +579,11 @@ Private Function InitCharMapSet(ByRef cmsCharMapSet As CHRMAPSET)
         Next j
     Next i
     
-    ' %strEnvName:~-lngStart,-lngEnd% Àà
+    ' %strEnvName:~-lngStart,-lngEnd% ç±»
     lngMapCount = lngMapCount + (((lngEnvironmentSize ^ 2) - lngEnvironmentSize) / 2)
     ReDim Preserve cmsCharMapSet.cmpCharMap(lngMapCount)
-    For i = lngEnvironmentSize To 2 Step -1 ' ÆğÊ¼×Ö·û
-        For j = i - 1 To 1 Step -1 ' ½áÊø×Ö·û
+    For i = lngEnvironmentSize To 2 Step -1 ' èµ·å§‹å­—ç¬¦
+        For j = i - 1 To 1 Step -1 ' ç»“æŸå­—ç¬¦
             With cmsCharMapSet.cmpCharMap(lngMapIndex)
                 .strCipherText = cmsCharMapSet.strEnvironmentName & ":~-" & i & ",-" & j
                 .strPlainText = Mid(cmsCharMapSet.strEnvironmentValue, lngEnvironmentSize - i + 1, i - j)
@@ -592,11 +592,11 @@ Private Function InitCharMapSet(ByRef cmsCharMapSet As CHRMAPSET)
         Next j
     Next i
     
-    ' %strEnvName:~-lngStart,lngLength% Àà
+    ' %strEnvName:~-lngStart,lngLength% ç±»
     lngMapCount = lngMapCount + (((lngEnvironmentSize ^ 2) + lngEnvironmentSize) / 2)
     ReDim Preserve cmsCharMapSet.cmpCharMap(lngMapCount)
-    For i = lngEnvironmentSize To 1 Step -1 ' ÆğÊ¼×Ö·û
-        For j = i To 1 Step -1 ' ³¤¶È
+    For i = lngEnvironmentSize To 1 Step -1 ' èµ·å§‹å­—ç¬¦
+        For j = i To 1 Step -1 ' é•¿åº¦
             With cmsCharMapSet.cmpCharMap(lngMapIndex)
                 .strCipherText = cmsCharMapSet.strEnvironmentName & ":~-" & i & "," & j
                 .strPlainText = Mid(cmsCharMapSet.strEnvironmentValue, lngEnvironmentSize - i + 1, j)
@@ -614,7 +614,7 @@ Private Function InitCharMapSet(ByRef cmsCharMapSet As CHRMAPSET)
     
 End Function
 
-' »ñÈ¡»·¾³±äÁ¿ÁĞ±í
+' è·å–ç¯å¢ƒå˜é‡åˆ—è¡¨
 Private Function GetEnvironmentList(strEncryptionHeader As String)
     Dim strTemp As String
     Dim vntTemp As Variant
@@ -705,7 +705,7 @@ Private Function GetEnvironmentList(strEncryptionHeader As String)
     
 End Function
 
-' »ñÈ¡¼ÓÃÜÍ·
+' è·å–åŠ å¯†å¤´
 Private Function GetEncryptionHeader() As String
     Dim strHeader As String
     Dim vntCode As Variant
