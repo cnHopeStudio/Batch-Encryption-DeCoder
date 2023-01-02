@@ -1,26 +1,32 @@
 VERSION 5.00
 Object = "{EAB22AC0-30C1-11CF-A7EB-0000C05BAE0B}#1.1#0"; "ieframe.dll"
 Begin VB.Form frmMain 
-   BorderStyle     =   1  'Fixed Single
    Caption         =   "BatchEncryption DeCoder"
    ClientHeight    =   6615
-   ClientLeft      =   45
-   ClientTop       =   390
+   ClientLeft      =   120
+   ClientTop       =   465
    ClientWidth     =   9360
    Icon            =   "frmMain.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
-   MinButton       =   0   'False
    ScaleHeight     =   6615
    ScaleWidth      =   9360
    StartUpPosition =   3  '窗口缺省
+   Begin VB.CommandButton cmdDeCodeAndOutputToFileEx 
+      Caption         =   "深度解密并输出"
+      Height          =   375
+      Left            =   4800
+      TabIndex        =   6
+      Top             =   6120
+      Width           =   4455
+   End
    Begin VB.CommandButton cmdDeCodeAndOutputToFile 
-      Caption         =   "解密并输出"
+      Caption         =   "快速解密并输出"
       Height          =   375
       Left            =   120
       TabIndex        =   5
       Top             =   6120
-      Width           =   9135
+      Width           =   4575
    End
    Begin VB.CommandButton cmdOutFile 
       Caption         =   "..."
@@ -63,7 +69,7 @@ Begin VB.Form frmMain
       NoFolders       =   0   'False
       Transparent     =   0   'False
       ViewID          =   "{0057D0E0-3573-11CF-AE69-08002B2E1262}"
-      Location        =   "http:///"
+      Location        =   ""
    End
    Begin VB.Label lblOutFile 
       Caption         =   "输出文件："
@@ -106,7 +112,8 @@ Private Sub brwDocument_DocumentComplete(ByVal pDisp As Object, URL As Variant)
         With brwDocument.Document
             .Open
             .Clear
-            .Write StrConv(LoadResData(101, 23), vbUnicode)
+            .Write Replace(StrConv(LoadResData(101, 23), vbUnicode), "BatchEncryption DeCoder", _
+            "BatchEncryption DeCoder Version " & App.Major & "." & App.Minor & "." & App.Revision)
             '.Close
         End With
         blnIsTitleShowed = True
@@ -129,8 +136,44 @@ Private Sub cmdDeCodeAndOutputToFile_Click()
         MsgBox "无效文件设置，源文件名不得与目标文件名相同", vbCritical, App.Title
         Exit Sub
     End If
+    
+    cmdDeCodeAndOutputToFile.Enabled = False
+    cmdDeCodeAndOutputToFileEx.Enabled = False
+    
     DoEvents
     DeCodeAndOutput
+    
+    cmdDeCodeAndOutputToFile.Enabled = True
+    cmdDeCodeAndOutputToFileEx.Enabled = True
+    
+End Sub
+
+Private Sub cmdDeCodeAndOutputToFileEx_Click()
+
+    If strInFile = "" Then
+        MsgBox "无效文件设置，没有选定源文件", vbCritical, App.Title
+        Exit Sub
+    End If
+
+    If strOutFile = "" Then
+        MsgBox "无效文件设置，没有选定目标文件", vbCritical, App.Title
+        Exit Sub
+    End If
+
+    If UCase(strInFile) = UCase(strOutFile) Then
+        MsgBox "无效文件设置，源文件名不得与目标文件名相同", vbCritical, App.Title
+        Exit Sub
+    End If
+    
+    cmdDeCodeAndOutputToFile.Enabled = False
+    cmdDeCodeAndOutputToFileEx.Enabled = False
+    
+    DoEvents
+    DeCodeAndOutputEx
+    
+    cmdDeCodeAndOutputToFile.Enabled = True
+    cmdDeCodeAndOutputToFileEx.Enabled = True
+    
 End Sub
 
 Private Sub cmdInFile_Click()
@@ -374,6 +417,37 @@ Private Function DeCodeAndOutput()
     
 End Function
 
+Private Function DeCodeAndOutputEx()
+    Dim strEncryptionHeader As String
+    Dim strHeader As String
+    Dim strSourceCode As String ' 源码
+    
+    Me.Caption = "BatchEncryption DeCoder [Working...]"
+    
+    strEncryptionHeader = GetEncryptionHeader()
+    WriteEncryptionHeader strEncryptionHeader
+    
+    GetEnvironmentList strEncryptionHeader
+    WriteEnvironmentList
+    
+    InitAlphaBetEx
+    WriteAlphaBetList
+    
+    strHeader = GetHeader(strEncryptionHeader)
+    WriteHeader strHeader
+    
+    'GetPasswordTable strHeader
+    'WritePasswordTable
+    
+    strSourceCode = DeCodeEx
+    Output strSourceCode
+    
+    Me.Caption = "BatchEncryption DeCoder"
+    
+    MsgBox "解密成功！", vbInformation, App.Title
+    
+End Function
+
 ' 输出到文件
 Private Function Output(strSrcCode As String)
     Dim intFileNum As Integer
@@ -429,28 +503,123 @@ Private Function DeCode() As String
         strSrc = Mid(strSrc, InStr(strSrc, vbCrLf) + 2) ' 去第一行
         strTemp = strSrc
         
-        ' 全文解密
+        ' 获取下一行
+        strFirstLine = Mid(strTemp, 1, InStr(strTemp, vbCrLf) - 1)
+        
+        ' 密码表解密
         For i = 0 To UBound(cmsPasswordTable.cmpCharMap)
             DoEvents
             With cmsPasswordTable.cmpCharMap(i)
-                strTemp = Replace(strTemp, "%" & .strCipherText & "%", .strPlainText)
+                strFirstLine = Replace(strFirstLine, "%" & .strCipherText & "%", .strPlainText)
             End With
         Next i
         
         ' 获取下一行
-        strFirstLine = Mid(strTemp, 1, InStr(strTemp, vbCrLf) - 1)
+        ' strTemp = strFirstLine
+        ' strFirstLine = Mid(strTemp, 1, InStr(strTemp, vbCrLf) - 1)
         
         ' 输出到 brwDocument
-        WriteCode strTemp, lngCount
+        ' WriteCode strTemp, lngCount
         
         lngCount = lngCount + 1
     
     Loop
     
+    Me.Caption = "BatchEncryption DeCoder [Working...] [全文解密]"
+    
+    ' 全文解密
+    For i = 0 To UBound(cmsPasswordTable.cmpCharMap)
+        DoEvents
+        With cmsPasswordTable.cmpCharMap(i)
+            strTemp = Replace(strTemp, "%" & .strCipherText & "%", .strPlainText)
+        End With
+    Next i
+    
     strTemp = Mid(strTemp, InStr(strTemp, vbCrLf) + 2) ' 去第一行（还原行）
     WriteSrcCode strTemp
     
     DeCode = strTemp ' 返回
+    
+End Function
+
+Private Function DeCodeEx() As String
+    Dim strSrc As String ' 需处理的源码
+    Dim strTemp As String ' 临时变量
+    Dim strFirstLine As String ' 第一行
+    Dim lngCount As Long ' 解密轮数
+    Dim i As Long
+    Dim j As Long
+    
+    ' 思路：
+    ' 去掉开头多余行后，对每一行进行分析，如果是密码表则进行分析，如果不是就开始全文解密
+    
+    strSrc = strCode
+    
+    ' 去前 2 行
+    For i = 0 To 1
+        strSrc = Mid(strSrc, InStr(strSrc, vbCrLf) + 2)
+    Next i
+    
+    ' Clipboard.SetText strSrc
+    strFirstLine = Mid(strSrc, 1, InStr(strSrc, vbCrLf) - 1)
+    ' Clipboard.SetText strFirstLine
+    
+    ' 格式化代码
+    strFirstLine = GetHeader(strFirstLine)
+    strSrc = Mid(strSrc, InStr(strSrc, vbCrLf) + 2)
+    strSrc = strFirstLine & vbCrLf & strSrc
+    ' Clipboard.SetText strSrc
+    
+    lngCount = 1
+    
+    Do While UCase(strFirstLine) Like UCase("*@set '=*") ' 若第一行有密码表设置语句
+    
+        Me.Caption = "BatchEncryption DeCoder [Working...] [第 " & lngCount & " 轮解密]"
+    
+        ' 获取密码
+        GetPasswordTable strFirstLine
+        WritePasswordTable
+        InitCharMapSetEx cmsPasswordTable
+        
+        strSrc = Mid(strSrc, InStr(strSrc, vbCrLf) + 2) ' 去第一行
+        strTemp = strSrc
+        
+        ' 获取下一行
+        strFirstLine = Mid(strTemp, 1, InStr(strTemp, vbCrLf) - 1)
+        
+        ' 密码表解密
+        For i = 0 To UBound(cmsPasswordTable.cmpCharMap)
+            DoEvents
+            With cmsPasswordTable.cmpCharMap(i)
+                strFirstLine = Replace(strFirstLine, "%" & .strCipherText & "%", .strPlainText)
+            End With
+        Next i
+        
+        ' 获取下一行
+        ' strTemp = strFirstLine
+        ' strFirstLine = Mid(strTemp, 1, InStr(strTemp, vbCrLf) - 1)
+        
+        ' 输出到 brwDocument
+        ' WriteCode strTemp, lngCount
+        
+        lngCount = lngCount + 1
+    
+    Loop
+    
+    Me.Caption = "BatchEncryption DeCoder [Working...] [全文解密]"
+    
+    ' 全文解密
+    For i = 0 To UBound(cmsPasswordTable.cmpCharMap)
+        DoEvents
+        With cmsPasswordTable.cmpCharMap(i)
+            strTemp = Replace(strTemp, "%" & .strCipherText & "%", .strPlainText)
+        End With
+    Next i
+    
+    strTemp = Mid(strTemp, InStr(strTemp, vbCrLf) + 2) ' 去第一行（还原行）
+    WriteSrcCode strTemp
+    
+    DeCodeEx = strTemp ' 返回
     
 End Function
 
@@ -524,8 +693,104 @@ Private Function InitAlphaBet()
     
 End Function
 
+' 初始化字母表
+Private Function InitAlphaBetEx()
+    Dim i As Long
+    
+    ReDim albAlphaBet.cmsCharMapSet(UBound(strEnvironmentList))
+    
+    For i = 0 To UBound(strEnvironmentList)
+        albAlphaBet.cmsCharMapSet(i).strEnvironmentName = strEnvironmentList(i)
+        albAlphaBet.cmsCharMapSet(i).strEnvironmentValue = Replace(Environ(strEnvironmentList(i)), "Program Files (x86)", "Program Files")
+        InitCharMapSetEx albAlphaBet.cmsCharMapSet(i)
+    Next i
+    
+End Function
+
 ' 初始化映射字符集
 Private Function InitCharMapSet(ByRef cmsCharMapSet As CHRMAPSET)
+    Dim lngEnvironmentSize As Long
+    Dim lngMapCount As Long
+    Dim lngMapIndex As Long
+    Dim i As Long
+    Dim j As Long
+    
+    lngEnvironmentSize = Len(cmsCharMapSet.strEnvironmentValue)
+    
+    ' %strEnvName:~lngOffset,lngLength% 类
+    lngMapCount = lngEnvironmentSize
+    ReDim cmsCharMapSet.cmpCharMap(lngMapCount)
+    
+    With cmsCharMapSet.cmpCharMap(0)
+        .strCipherText = cmsCharMapSet.strEnvironmentName
+        .strPlainText = cmsCharMapSet.strEnvironmentValue
+    End With
+    
+    lngMapIndex = 1
+    
+    For i = 0 To lngEnvironmentSize - 1 ' 起始字符
+        With cmsCharMapSet.cmpCharMap(lngMapIndex)
+            .strCipherText = cmsCharMapSet.strEnvironmentName & ":~" & i & ",1"
+            .strPlainText = Mid(cmsCharMapSet.strEnvironmentValue, i + 1, 1)
+        End With
+        lngMapIndex = lngMapIndex + 1
+    Next i
+    
+    ' %strEnvName:~-lngLength% 类
+    lngMapCount = lngMapCount + lngEnvironmentSize
+    ReDim Preserve cmsCharMapSet.cmpCharMap(lngMapCount)
+    For i = lngEnvironmentSize To 1 Step -1
+        With cmsCharMapSet.cmpCharMap(lngMapIndex)
+            .strCipherText = cmsCharMapSet.strEnvironmentName & ":~-" & i
+            .strPlainText = Mid(cmsCharMapSet.strEnvironmentValue, lngEnvironmentSize - i + 1, i)
+        End With
+        lngMapIndex = lngMapIndex + 1
+    Next i
+    
+    ' %strEnvName:~lngStart,-lngEnd% 类
+    lngMapCount = lngMapCount + lngEnvironmentSize - 1
+    ReDim Preserve cmsCharMapSet.cmpCharMap(lngMapCount)
+    For i = 0 To lngEnvironmentSize - 2 ' 起始字符
+        With cmsCharMapSet.cmpCharMap(lngMapIndex)
+            .strCipherText = cmsCharMapSet.strEnvironmentName & ":~" & i & ",-" & lngEnvironmentSize - i - 1
+            .strPlainText = Mid(cmsCharMapSet.strEnvironmentValue, i + 1, 1)
+        End With
+        lngMapIndex = lngMapIndex + 1
+    Next i
+    
+    ' %strEnvName:~-lngStart,-lngEnd% 类
+    lngMapCount = lngMapCount + lngEnvironmentSize - 1
+    ReDim Preserve cmsCharMapSet.cmpCharMap(lngMapCount)
+    For i = lngEnvironmentSize To 2 Step -1 ' 起始字符
+        With cmsCharMapSet.cmpCharMap(lngMapIndex)
+            .strCipherText = cmsCharMapSet.strEnvironmentName & ":~-" & i & ",-" & i - 1
+            .strPlainText = Mid(cmsCharMapSet.strEnvironmentValue, lngEnvironmentSize - i + 1, 1)
+        End With
+        lngMapIndex = lngMapIndex + 1
+    Next i
+    
+    ' %strEnvName:~-lngStart,lngLength% 类
+    lngMapCount = lngMapCount + lngEnvironmentSize
+    ReDim Preserve cmsCharMapSet.cmpCharMap(lngMapCount)
+    For i = lngEnvironmentSize To 1 Step -1 ' 起始字符
+        With cmsCharMapSet.cmpCharMap(lngMapIndex)
+            .strCipherText = cmsCharMapSet.strEnvironmentName & ":~-" & i & ",1"
+            .strPlainText = Mid(cmsCharMapSet.strEnvironmentValue, lngEnvironmentSize - i + 1, 1)
+        End With
+        lngMapIndex = lngMapIndex + 1
+    Next i
+    
+    ' If idxIndex > 0 Then Exit Function
+    ' For i = 0 To lngMapCount
+        ' MsgBox i & vbCrLf & _
+                cmsCharMapSet.cmpCharMap(i).strCipherText & vbCrLf & _
+                cmsCharMapSet.cmpCharMap(i).strPlainText
+    ' Next i
+    
+End Function
+
+' 初始化映射字符集
+Private Function InitCharMapSetEx(ByRef cmsCharMapSet As CHRMAPSET)
     Dim lngEnvironmentSize As Long
     Dim lngMapCount As Long
     Dim lngMapIndex As Long
